@@ -1,6 +1,11 @@
 <template>
   <div >
-    <van-cell class="thePassageItemMain">
+    <van-cell class="thePassageItemMain"  :to="{
+      name:'article',
+      params:{
+        articleId:passage.art_id
+      }
+    }">
       <div slot="title" :class="['title van-multi-ellipsis--l3',passage.cover.type==1?'setMargin43':'',passage.cover.type==0?'setMargin24':'']" >
         {{passage.title}}
       </div>
@@ -40,13 +45,6 @@ export default {
       type: Object,
       required: true
     }
-  },
-  data () {
-    return {
-    }
-  },
-  methods: {
-
   }
 }
 </script>

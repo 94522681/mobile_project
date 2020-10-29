@@ -30,6 +30,12 @@ const routes = [
       path: '/video',
       component: () => import('@/views/video')
     }]
+  },
+  {
+    path: '/article/:articleId',
+    name: 'article',
+    component: () => import('@/views/article'),
+    props: true
   }
 ]
 

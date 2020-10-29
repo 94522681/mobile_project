@@ -27,3 +27,10 @@ export const deleteChannel = channelId => {
     url: `/app/v1_0/user/channels/${channelId}`
   })
 }
+
+export const getPassageById = id => {
+  return request({
+    methods: 'get',
+    url: `/app/v1_0/articles/${id}`
+  })
+}

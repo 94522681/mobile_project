@@ -11,7 +11,7 @@
         placeholder="请输入搜索关键词"
         @search="onSearch"
         @cancel="onCancel"
-          background="#4fc08d"
+        background="#4fc08d"
         shape="round"
         clearable
         @focus='isResultShow=false'

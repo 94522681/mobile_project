@@ -108,7 +108,8 @@ export default {
 <style lang="less" scoped>
 .header{
   height: 361px;
-  background: url('~@/assets/banner.png') no-repeat;
+  // background: url('~@/assets/banner.png') no-repeat;
+  background-color: #4fc08d;
   background-size: cover;
   display: flex;
   justify-content: center;
@@ -150,7 +151,8 @@ export default {
 }
 .user-info{
     height: 361px;
-  background: url('~@/assets/banner.png') no-repeat;
+  // background: url('~@/assets/banner.png') no-repeat;
+  background-color: #4fc08d;
   background-size: cover;
   .base-info{
     height: 231px;

@@ -116,7 +116,7 @@ export default {
  .search-btn{
     width: 555px;
     height: 64px;
-    background-color: #5babfb;
+    background-color: #5BABAE;
     border:none;
     font-size: 28px;
     .van-icon{
