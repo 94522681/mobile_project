@@ -59,6 +59,7 @@
         <!-- 文章内容 -->
         <div class="article-content markdown-body" v-html="data.content" ref='thecontent'></div>
         <van-divider>正文结束</van-divider>
+        <comment-list :source="articleId"  @commontCount="setTotal" ref="commentlist" round position="bottom" :style="{ width: '100%'}"></comment-list>
       </div>
       <!-- /加载完成-文章详情 -->
 
@@ -85,11 +86,13 @@
         type="default"
         round
         size="small"
+        @click="popShow=true"
       >写评论</van-button>
       <van-icon
         name="comment-o"
-        info="123"
+        :info="totalCommentCount"
         color="#777"
+        @click="commentShow=true"
       />
       <van-icon
         :color="data.is_collected? '#ffa500':'#777'"
@@ -101,9 +104,27 @@
         :name="data.attitude===1? 'good-job':'good-job-o'"
         @click="likeIt"
       />
-      <van-icon name="share" color="#777777"></van-icon>
+      <van-icon name="share" color="#777777" ></van-icon>
     </div>
     <!-- /底部区域 -->
+
+    <!-- 添加评论的弹出层 -->
+    <van-popup v-model="popShow" position="bottom" :style="{ height: '120px' }"  class="theCommentPop">
+      <van-field
+        v-focus
+        v-model="inputMessage"
+        rows="3"
+        autosize
+        type="textarea"
+        placeholder="请输入评论"
+        maxlength="50"
+        show-word-limit
+    />
+    <van-button @click="toAddComment" >发布</van-button>
+    </van-popup>
+      <van-popup v-model="commentShow" position="bottom"  class="thedetailPop">
+        <comment-list :source="articleId"  @commontCount="setTotal" ref="commentlist"></comment-list>
+      </van-popup>
   </div>
 </template>
 <script>
@@ -111,9 +132,13 @@ import { getPassageById } from '@/api/passage'
 import './markdown.css'
 import { ImagePreview } from 'vant'
 import { addFollow, deleteFollow, collectPassage, deleteCollect, toLikeIt, deleteLikeIt } from '@/api/user.js'
+import CommentList from '@/components/comment'
+import { addComment } from '@/api/comment.js'
 export default {
   name: 'ArticleIndex',
-  components: {},
+  components: {
+    CommentList
+  },
   props: {
     articleId: {
       type: [Number, String, Object],
@@ -122,7 +147,12 @@ export default {
   },
   data () {
     return {
-      data: {}
+      commentShow: false,
+      totalCommentCount: 0,
+      inputMessage: '',
+      popShow: false,
+      data: {
+      }
     }
   },
   mounted () {
@@ -176,7 +206,6 @@ export default {
       try {
         await deleteFollow(this.data.aut_id)
         this.data.is_followed = false
-        console.log(1)
       } catch (err) {
         console.log(err)
       }
@@ -235,16 +264,45 @@ export default {
           console.log(err)
         }
       }
+    },
+    async toAddComment () {
+      try {
+        const { data: res } = await addComment({
+          target: this.data.art_id,
+          content: this.inputMessage
+        })
+        this.popShow = false
+        this.$refs.commentlist.list.unshift(res.data.new_obj)
+        this.$toast.success('评论成功')
+        this.totalCommentCount++
+        this.inputMessage = ''
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    setTotal (number) {
+      this.totalCommentCount = number
     }
   },
   created () {
     this.getPassageContent()
+  },
+  directives: {
+    focus: {
+      inserted (el) {
+        const t = el.querySelector('textarea')
+        t.focus()
+      }
+    }
   }
 }
 </script>
-
 <style scoped lang="less">
 .article-container {
+  .thedetailPop{
+    width:100%;
+    height: 90%;
+  }
   .main-wrap {
     position: fixed;
     left: 0;
@@ -354,6 +412,25 @@ export default {
         font-size: 16px;
         background-color: #e22829;
       }
+    }
+  }
+
+ /deep/ .theCommentPop{
+  display:flex;
+  .van-field{
+  .van-field__value{
+    background-color: initial;
+  }
+  }
+  .van-button{
+      // position: absolute;
+      flex-shrink: unset;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 0;
+      color: #6ba3d8;
+      font-size: 20px;
+      width: 128px;
     }
   }
 }
